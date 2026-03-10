@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Employee Dashboard</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/attendance.css') }}"></head>
+<body>
+
+<div class="login-card">
+    <h2>Employee Dashboard</h2>
+
+    <button onclick="login()">Log In</button>
+    <button onclick="logout()">Logout</button>
+
+    
+    <p id="msg"></p>
+</div>
+
+<script>
+const token = localStorage.getItem("token");
+
+async function login(){
+    try{
+        const res = await fetch("http://127.0.0.1:5000/api/employee/login", {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        if(!res.ok){
+            const text = await res.text();
+            document.getElementById("msg").innerText = `Error: ${res.status} ${text}`;
+            return;
+        }
+
+        const data = await res.json();
+        document.getElementById("msg").innerText = data.message;
+    }catch(err){
+        document.getElementById("msg").innerText = "Request failed: " + err.message;
+    }
+}
+
+async function logout(){
+    try{
+        const res = await fetch("http://127.0.0.1:5000/api/employee/logout", {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        if(!res.ok){
+            const text = await res.text();
+            document.getElementById("msg").innerText = `Error: ${res.status} ${text}`;
+            return;
+        }
+
+        const data = await res.json();
+        document.getElementById("msg").innerText = data.message;
+    }catch(err){
+        document.getElementById("msg").innerText = "Request failed: " + err.message;
+    }
+}
+
+function logout(){
+    localStorage.clear();
+    window.location.href="login.html";
+}
+</script>
+
+<script src="{{ url_for('static', filename='js/employee.js') }}"></script>
+
+</body>
+</html>

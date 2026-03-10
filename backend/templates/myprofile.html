@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>My Profile</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/myprofile.css') }}">
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<header>
+
+<div class="logo">MSSQUARE TECHNOLOGIES</div>
+
+<nav>
+
+<a href="/home">Home</a>
+<a href="#" onclick="siteLogout()">Logout</a>
+
+</nav>
+
+</header>
+
+
+
+<div class="main-container">
+
+<h1 class="page-title">My Profile</h1>
+
+
+<!-- PROFILE CARD -->
+
+<div class="profile-card">
+
+<div class="profile-left">
+
+<img src="{{ url_for('static', filename='images/profile.jpg') }}" class="profile-img">
+
+<div class="profile-info">
+
+<h2 id="empName">Loading...</h2>
+<p id="empRole"></p>
+<p id="empId"></p>
+
+</div>
+
+</div>
+
+
+<div class="attendance-ring">
+
+<div class="circle">
+<span id="attendancePercent">--%</span>
+</div>
+
+<p class="ring-text">Attendance</p>
+
+</div>
+
+</div>
+
+
+
+<!-- STATS CARDS -->
+
+<div class="stats-grid">
+
+<div class="stat-card">
+<h3>Total Working Days</h3>
+<p id="totalDays">--</p>
+</div>
+
+<div class="stat-card">
+<h3>Present Days</h3>
+<p id="presentDays">--</p>
+</div>
+
+<div class="stat-card">
+<h3>Half Days</h3>
+<p id="halfDays">0</p>
+</div>
+
+<div class="stat-card">
+<h3>Late Logins</h3>
+<p id="lateDays">--</p>
+</div>
+
+</div>
+
+
+
+<!-- ATTENDANCE REPORT -->
+
+<div class="report-card">
+
+<div class="report-header">
+
+<h2>Attendance Report</h2>
+<button onclick="window.location.href='/attendance'">View All</button>
+
+</div>
+
+<table>
+
+<thead>
+
+<tr>
+<th>Date</th>
+<th>Login</th>
+<th>Break</th>
+<th>Logout</th>
+<th>Status</th>
+</tr>
+
+</thead>
+
+<tbody id="attendanceTable">
+
+<tr>
+<td colspan="5">Loading attendance...</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+
+<!-- FOOTER -->
+
+<footer>
+
+<p>© 2026 MSSQUARE Technologies | Employee Attendance System</p>
+
+</footer>
+
+
+<script>
+
+/* TOKEN CHECK */
+
+const token = localStorage.getItem("token");
+
+if(!token){
+window.location.href="/";
+}
+
+
+
+/* LOAD PROFILE */
+
+async function loadProfile(){
+
+try{
+
+const res = await fetch("/api/employee/profile",{
+headers:{
+"Authorization":"Bearer " + token
+}
+});
+
+const data = await res.json();
+
+document.getElementById("empName").innerText = data.username;
+document.getElementById("empRole").innerText = data.role;
+document.getElementById("empId").innerText = "ID: EMP" + data.id;
+
+}catch(err){
+
+console.error("Profile error",err);
+
+}
+
+}
+
+
+
+/* LOAD ATTENDANCE */
+
+async function loadAttendance(){
+
+try{
+
+const res = await fetch("/api/employee/my-attendance",{
+headers:{
+"Authorization":"Bearer " + token
+}
+});
+
+const data = await res.json();
+
+const table = document.getElementById("attendanceTable");
+
+table.innerHTML = "";
+
+if(!data || data.length === 0){
+
+table.innerHTML = `
+<tr>
+<td colspan="5">No attendance records</td>
+</tr>
+`;
+
+return;
+
+}
+
+
+let present = 0;
+let half = 0;
+let late = 0;
+
+data.forEach(record => {
+
+if(record.status && record.status.toLowerCase() === "present") {
+present++;
+}
+
+if(record.status && record.status.toLowerCase().includes("half")) {
+half++;
+}
+const row = document.createElement("tr");
+
+row.innerHTML = `
+<td>${record.date}</td>
+<td>${record.tap_in || "-"}</td>
+<td>${record.break_start || "-"} - ${record.break_end || "-"}</td>
+<td>${record.tap_out || "-"}</td>
+<td class="${record.status ? record.status.toLowerCase() : ""}">
+${record.status || "-"}
+</td>
+`;
+
+table.appendChild(row);
+
+});
+
+
+/* UPDATE STATS */
+
+const total = data.length;
+
+document.getElementById("totalDays").innerText = total;
+document.getElementById("presentDays").innerText = present;
+document.getElementById("halfDays").innerText = half;
+document.getElementById("lateDays").innerText = late;
+
+
+/* ATTENDANCE PERCENTAGE */
+
+const score = present + (half * 0.5);
+
+const percent = total > 0 ? Math.round((score/total)*100) : 0;
+
+document.getElementById("attendancePercent").innerText = percent + "%";
+
+
+}catch(err){
+
+console.error("Attendance load error",err);
+
+}
+
+}
+
+
+
+/* LOGOUT */
+
+function siteLogout(){
+
+localStorage.removeItem("token");
+localStorage.removeItem("role");
+
+window.location.href="/";
+
+}
+
+
+
+/* PAGE LOAD */
+
+loadProfile();
+loadAttendance();
+
+</script>
+
+
+</body>
+</html>
