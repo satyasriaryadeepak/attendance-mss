@@ -1,0 +1,179 @@
+/* BODY */
+
+body{
+margin:0;
+font-family:Segoe UI, sans-serif;
+background:#f4f6fb;
+color:#333;
+}
+
+
+/* HEADER */
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 40px;
+background:white;
+box-shadow:0 3px 10px rgba(0,0,0,0.08);
+position:sticky;
+top:0;
+z-index:100;
+}
+
+.logo{
+font-size:20px;
+font-weight:bold;
+color:#6b4dfc;
+}
+
+nav a{
+margin-left:25px;
+text-decoration:none;
+color:#333;
+font-weight:500;
+transition:0.3s;
+}
+
+nav a:hover{
+color:#6b4dfc;
+}
+
+
+/* HERO */
+
+.hero{
+height:320px;
+background:linear-gradient(135deg,#6b4dfc,#3f8cff);
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+color:white;
+animation:fadeIn 1s ease;
+}
+
+.hero h1{
+font-size:42px;
+margin-bottom:10px;
+}
+
+.hero p{
+font-size:18px;
+opacity:0.9;
+}
+
+
+/* MAIN CONTAINER */
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:40px 20px;
+}
+
+
+/* ABOUT COMPANY */
+
+.about-company{
+background:white;
+padding:30px;
+border-radius:12px;
+box-shadow:0 6px 20px rgba(0,0,0,0.08);
+line-height:1.7;
+margin-bottom:40px;
+}
+
+.about-company h2{
+color:#6b4dfc;
+margin-bottom:20px;
+}
+
+.about-company p{
+margin-bottom:15px;
+color:#555;
+}
+
+
+/* MISSION VISION */
+
+.about-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:30px;
+margin-bottom:40px;
+}
+
+.about-card{
+background:white;
+padding:25px;
+border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,0.08);
+transition:0.3s;
+}
+
+.about-card:hover{
+transform:translateY(-5px);
+}
+
+.about-card h3{
+color:#6b4dfc;
+margin-bottom:10px;
+}
+
+
+/* FEATURES */
+
+.features{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:25px;
+}
+
+.feature-box{
+background:white;
+padding:25px;
+border-radius:12px;
+text-align:center;
+box-shadow:0 5px 15px rgba(0,0,0,0.08);
+transition:0.3s;
+}
+
+.feature-box:hover{
+background:#6b4dfc;
+color:white;
+transform:translateY(-6px);
+}
+
+.feature-box h4{
+margin-bottom:10px;
+}
+
+
+/* FOOTER */
+
+footer{
+text-align:center;
+padding:20px;
+background:white;
+margin-top:40px;
+font-size:14px;
+color:#777;
+border-top:1px solid #eee;
+}
+
+
+/* ANIMATION */
+
+@keyframes fadeIn{
+from{
+opacity:0;
+transform:translateY(20px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<title>MSSQUARE Attendance System</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+
+</head>
+
+<body>
+
+
+<!-- HEADER -->
+
+<header>
+
+<nav class="nav-left">
+<a href="/home">Home</a>
+<a href="/attendance">Attendance</a>
+<a href="/contact">Contact Us</a>
+</nav>
+
+<div class="logo">
+MSSQUARE TECHNOLOGIES
+</div>
+
+<nav class="nav-right">
+<a href="/about">About</a>
+<a href="/myprofile">My Profile</a>
+<a href="#" onclick="logout()">Logout</a>
+</nav>
+
+</header>
+
+
+
+<!-- HERO SECTION -->
+
+<section class="hero">
+
+<h3>Welcome to the MSSQUARE Attendance System</h3>
+
+<h1>Work Smart. Stay Accountable.</h1>
+
+<p>Track attendance efficiently and maintain transparency in the workplace.</p>
+
+<button onclick="markAttendance()">Mark Attendance</button>
+
+</section>
+
+
+
+<!-- FEATURES -->
+
+<section class="features">
+
+<h2>Smart Attendance Management</h2>
+
+<div class="feature-grid">
+
+<div class="feature-box">
+<h3>Secure Login</h3>
+<p>Attendance can only be marked from authorized networks and devices.</p>
+</div>
+
+<div class="feature-box">
+<h3>Automated Tracking</h3>
+<p>Automatically track login, break time, and logout for accurate records.</p>
+</div>
+
+<div class="feature-box">
+<h3>Real-Time Reports</h3>
+<p>Managers and employees can instantly view attendance insights.</p>
+</div>
+
+<div class="feature-box">
+<h3>Smart Rules</h3>
+<p>Automatic half-day and absence calculation based on attendance timing.</p>
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- STATISTICS -->
+
+<section class="stats">
+
+<div class="stat-box">
+<h2>100%</h2>
+<p>Attendance Transparency</p>
+</div>
+
+<div class="stat-box">
+<h2>24/7</h2>
+<p>System Availability</p>
+</div>
+
+<div class="stat-box">
+<h2>Secure</h2>
+<p>Network Based Login</p>
+</div>
+
+<div class="stat-box">
+<h2>Smart</h2>
+<p>Automated Attendance Policies</p>
+</div>
+
+</section>
+
+
+
+<!-- FOOTER -->
+
+<footer>
+
+<p>© 2026 MSSQUARE Technologies | Employee Attendance System</p>
+
+</footer>
+
+
+
+<script>
+
+/* MARK ATTENDANCE */
+
+function markAttendance(){
+window.location.href="/attendance";
+}
+
+
+/* LOGOUT FUNCTION */
+
+function logout(){
+
+if(confirm("Are you sure you want to logout?")){
+
+localStorage.removeItem("token");
+localStorage.removeItem("role");
+
+window.location.href="/";
+
+}
+
+}
+
+</script>
+
+
+</body>
+</html>
