@@ -1,19 +1,18 @@
 from flask import Blueprint, request, jsonify
-from models import db, User
-from flask_jwt_extended import create_access_token
-from werkzeug.security import generate_password_hash, check_password_hash
+from supabase_client import supabase
 
 auth_bp = Blueprint("auth", __name__)
 
+# Utility to convert username to a valid email format for Supabase Auth
+def make_email(username):
+    return f"{username}@mss.com"
 
 # -----------------------------
-# Register User
+# Register User (Optional, if needed directly)
 # -----------------------------
 @auth_bp.route("/register", methods=["POST"])
 def register():
-
     data = request.json
-
     username = data.get("username")
     password = data.get("password")
     role = data.get("role")
@@ -21,42 +20,50 @@ def register():
     if not username or not password or not role:
         return jsonify({"message": "username, password, role required"}), 400
 
-    existing = User.query.filter_by(username=username).first()
+    email = make_email(username)
 
-    if existing:
-        return jsonify({"message": "User already exists"}), 400
-
-    hashed_pw = generate_password_hash(password)
-
-    user = User(username=username, password=hashed_pw, role=role)
-
-    db.session.add(user)
-    db.session.commit()
-
-    return jsonify({"message": "User created successfully"})
+    try:
+        # Create user in Supabase Auth
+        res = supabase.auth.sign_up({"email": email, "password": password})
+        if not res.user:
+            return jsonify({"message": "User creation failed"}), 400
+        
+        # Save user to public.users table
+        supabase.table("users").insert({
+            "id": res.user.id,
+            "username": username,
+            "role": role
+        }).execute()
+        
+        return jsonify({"message": "User created successfully"})
+    except Exception as e:
+        return jsonify({"message": str(e)}), 400
 
 # -----------------------------
 # Login User
 # -----------------------------
 @auth_bp.route("/login", methods=["POST"])
 def login():
-
     data = request.json
-
     username = data.get("username")
     password = data.get("password")
 
-    user = User.query.filter_by(username=username).first()
+    email = make_email(username)
 
-    if not user:
-        return jsonify({"message": "User not found"}), 404
+    try:
+        # Authenticate with Supabase Auth
+        res = supabase.auth.sign_in_with_password({"email": email, "password": password})
+        
+        if not res.session:
+            return jsonify({"message": "Invalid credentials"}), 401
+            
+        # Get user role from public.users table
+        user_record = supabase.table("users").select("role").eq("id", res.user.id).single().execute()
+        role = user_record.data.get("role") if user_record.data else "employee"
 
-    if not check_password_hash(user.password, password):
-        return jsonify({"message": "Invalid password"}), 401
-
-    token = create_access_token(identity=str(user.id))
-
-    return jsonify({
-        "access_token": token,
-        "role": user.role
-    })
+        return jsonify({
+            "access_token": res.session.access_token,
+            "role": role
+        })
+    except Exception as e:
+        return jsonify({"message": "Invalid password or username. " + str(e)}), 401
