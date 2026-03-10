@@ -78,7 +78,59 @@ async function loadAttendance() {
     }
 }
 
+async function loadEmployees() {
+    const list = document.getElementById("employeeList");
+    if (!list) return;
+
+    list.innerHTML = "";
+    const token = getToken();
+
+    try {
+        const response = await fetch("/api/admin/employees", {
+            headers: { "Authorization": "Bearer " + token }
+        });
+        const data = await response.json();
+
+        if (data.length === 0) {
+            list.innerHTML = '<tr><td colspan="4">No employees found.</td></tr>';
+            return;
+        }
+
+        data.forEach(emp => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${emp.id.substring(0, 8)}...</td>
+                <td>${emp.username}</td>
+                <td>Employee</td>
+                <td>
+                    <button class="delete-btn" onclick="deleteEmployee('${emp.id}')">Delete</button>
+                </td>
+            `;
+            list.appendChild(row);
+        });
+    } catch (err) {
+        list.innerHTML = `<tr><td colspan="4" style="color:red">Failed: ${err.message}</td></tr>`;
+    }
+}
+
+async function loadReport() {
+    const token = getToken();
+    try {
+        const response = await fetch("/api/admin/attendance-report", {
+            headers: { "Authorization": "Bearer " + token }
+        });
+        const data = await response.json();
+        document.getElementById("totalEmployees").innerText = `Total Employees : ${data.total_employees}`;
+        document.getElementById("presentToday").innerText = `Present Today : ${data.present_today}`;
+        document.getElementById("absentToday").innerText = `Absent Today : ${data.absent_today}`;
+    } catch (err) {
+        console.error("Report load failed:", err);
+    }
+}
+
 loadAttendance();
+loadEmployees();
+loadReport();
 
 
 /* CREATE EMPLOYEE */
@@ -149,6 +201,8 @@ createBtn.addEventListener("click", async ()=>{
             document.getElementById("newPassword").value = "";
 
             loadAttendance();
+            loadEmployees();
+            loadReport();
         }
 
     }
@@ -233,3 +287,26 @@ async function updateAttendance(attendanceId, status){
     }
 
 }
+
+async function deleteEmployee(userId) {
+    if (!confirm("Are you sure you want to delete this employee?")) return;
+
+    const token = getToken();
+    try {
+        const response = await fetch(`/api/admin/delete-employee/${userId}`, {
+            method: "DELETE",
+            headers: { "Authorization": "Bearer " + token }
+        });
+
+        if (response.ok) {
+            alert("Employee deleted successfully");
+            loadEmployees();
+            loadReport();
+        } else {
+            const data = await response.json();
+            alert("Delete failed: " + (data.message || "Unknown error"));
+        }
+    } catch (err) {
+        alert("Request failed: " + err.message);
+    }
+}
