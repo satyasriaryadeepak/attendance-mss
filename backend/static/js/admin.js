@@ -19,7 +19,7 @@ async function loadAttendance() {
 
     try {
         const response = await fetch(
-            "http://127.0.0.1:5000/api/admin/all-attendance",
+            "https://attendance-mss.onrender.com/api/admin/all-attendance",
             {
                 method: "GET",
                 headers: {
@@ -120,7 +120,7 @@ createBtn.addEventListener("click", async ()=>{
     try{
 
         const res = await fetch(
-            "http://127.0.0.1:5000/api/admin/create-employee",
+            "https://attendance-mss.onrender.com/api/admin/create-employee",
             {
                 method: "POST",
                 headers:{
@@ -201,7 +201,7 @@ async function updateAttendance(attendanceId, status){
     try{
 
         const res = await fetch(
-            "http://127.0.0.1:5000/api/admin/edit-attendance",
+            "https://attendance-mss.onrender.com/api/admin/edit-attendance",
             {
                 method: "PUT",
                 headers:{

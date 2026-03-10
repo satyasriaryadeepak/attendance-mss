@@ -20,7 +20,7 @@ const token = localStorage.getItem("token");
 
 async function login(){
     try{
-        const res = await fetch("http://127.0.0.1:5000/api/employee/login", {
+        const res = await fetch("https://attendance-mss.onrender.com/api/employee/login", {
             method: "POST",
             headers: {
                 "Authorization": "Bearer " + token
@@ -42,7 +42,7 @@ async function login(){
 
 async function logout(){
     try{
-        const res = await fetch("http://127.0.0.1:5000/api/employee/logout", {
+        const res = await fetch("https://attendance-mss.onrender.com/api/employee/logout", {
             method: "POST",
             headers: {
                 "Authorization": "Bearer " + token
