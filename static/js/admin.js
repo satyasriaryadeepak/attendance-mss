@@ -5,6 +5,7 @@ function getToken() {
 /* LOAD ATTENDANCE */
 
 async function loadAttendance() {
+    console.log("DEBUG: loadAttendance started");
     const table = document.getElementById("attendanceTable");
     if (!table) return;
 
@@ -79,6 +80,7 @@ async function loadAttendance() {
 }
 
 async function loadEmployees() {
+    console.log("DEBUG: loadEmployees started");
     const list = document.getElementById("employeeList");
     if (!list) return;
 
@@ -114,6 +116,7 @@ async function loadEmployees() {
 }
 
 async function loadReport() {
+    console.log("DEBUG: loadReport started");
     const token = getToken();
     try {
         const response = await fetch("/api/admin/attendance-report", {
